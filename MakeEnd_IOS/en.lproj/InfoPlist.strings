@@ -1,0 +1,4 @@
+/* Localized versions of Info.plist keys */
+"CONFIRM" = "확인";
+"CANCEL" = "취소";
+"LOCATION_NOTFOOUND" = "위치정보를 가져올 수 없습니다.";

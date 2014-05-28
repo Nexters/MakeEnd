@@ -1,0 +1,25 @@
+PODS:
+  - AFNetworking (1.3.4)
+  - CJStringValidator (1.0.1)
+  - CWPopup (1.2.5)
+  - FSExtendedAlertKit (0.1.0)
+  - MBProgressHUD (0.8)
+  - XMLDictionary (1.4)
+
+DEPENDENCIES:
+  - AFNetworking (< 1.9.9)
+  - CJStringValidator
+  - CWPopup (~> 1.2.5)
+  - FSExtendedAlertKit
+  - MBProgressHUD
+  - XMLDictionary (~> 1.4)
+
+SPEC CHECKSUMS:
+  AFNetworking: 80c4e0652b08eb34e25b9c0ff3c82556fe5967b4
+  CJStringValidator: 6b13b71275d3fce869b37ccbca025a2151712966
+  CWPopup: 78985e84f8a62de13cf67aa287496d14ce6107aa
+  FSExtendedAlertKit: c87837d307dbf8be0dd2f432960262413530d5b2
+  MBProgressHUD: c356980b0cd097f19acec959b49dca5eb8ec31be
+  XMLDictionary: 735e81b9a043e220b0d24e9d4f16719606f2e0fc
+
+COCOAPODS: 0.32.1
