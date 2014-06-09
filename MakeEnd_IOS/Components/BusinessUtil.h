@@ -10,4 +10,5 @@
 
 @interface BusinessUtil : NSObject
 + (NSString*)localCodeFromAddress:(NSString*)address;
++ (NSArray*)locationAddressesArray;
 @end

@@ -8,22 +8,32 @@
 
 #import "SearchView.h"
 #import "SearchTableViewCell.h"
+#import "SearchLocationTableViewCell.h"
 #import "MainViewController.h"
+#import "BusinessUtil.h"
+#import "Manager.h"
 @implementation SearchView
 
 - (id) initWithCoder:(NSCoder *)aCoder{
     if(self = [super initWithCoder:aCoder]){
-        
     }
     return self;
 }
 
 - (void)initView{
+    for (int i=0; i < 100; i++) {
+        isOpen[i] = 0;
+    }
+    _searchDic = [Manager sharedSingleton].searchDic;
+    
+    _locationArray = [BusinessUtil locationAddressesArray];
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissPopup)];
     tapRecognizer.numberOfTapsRequired = 1;
     //tapRecognizer.delegate = self;
-    [self addGestureRecognizer:tapRecognizer];
-    NSLog(@"_mainViewCont.localCode : %@",_mainViewCont.localCode);
+    [self.backgroundColorView addGestureRecognizer:tapRecognizer];
+    if ([_searchDic count] != 0) {
+        
+    }
     NSMutableDictionary* parameters = [[NSMutableDictionary alloc] init];
     [parameters setObject:_mainViewCont.localCode forKey:@"locCode"];
     [[AFAppDotNetAPIClient sharedClient] postPath:@"MakeEndQuickList.asp" parameters:parameters success:^(AFHTTPRequestOperation *response, id responseObject) {
@@ -31,6 +41,23 @@
 #ifdef __DEBUG_LOG__
         JY_LOG(@"MakeEndQuickList.asp: %@",[dic objectForKey:@"quicklist"]);
 #endif
+        NSMutableArray* arr = [dic objectForKey:@"quicklist"];
+        if ([arr count] == 0) {
+            return ;
+        }
+        NSString* currentLocationCode = [[arr objectAtIndex:0] objectForKey:@"locationcode"];
+        NSMutableArray* currentLocationArr = [NSMutableArray new];
+        for (NSDictionary* searchDic in arr) {
+            if (![currentLocationCode isEqualToString:[searchDic objectForKey:@"locationcode"]]
+                || [searchDic isEqual:[arr lastObject]]) {
+                [_searchDic setObject:currentLocationArr forKey:currentLocationCode];
+                currentLocationCode = [searchDic objectForKey:@"locationcode"];
+                currentLocationArr = [NSMutableArray new];
+            }
+            [currentLocationArr addObject:searchDic];
+        }
+        JY_LOG(@"_searchDic count : %ld",[_searchDic count]);
+        [_tableView reloadData];
     } failure:^(AFHTTPRequestOperation *operation,NSError *error) {
 #ifdef __DEBUG_LOG__
         JY_LOG(@"MakeEndQuickList.asp [HTTPClient Error]: %@", error.localizedDescription);
@@ -50,27 +77,45 @@
 #pragma mark UITableViewDelegate UITableViewDataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return 10;
+    if (isOpen[section]) {
+        return 2;
+    }
+    return 1;
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    return 1;
+    return [_locationArray count];;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     static NSString *CellIdentifier = @"Cell";
-    SearchTableViewCell *cell = (SearchTableViewCell*) [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    
-    if (cell == nil){
-        NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"SearchTableViewCell" owner:nil options:nil];
-        cell = [topLevelObjects objectAtIndex:0];
+    if (indexPath.row == 0) {
+        NSString* locationName = [_locationArray objectAtIndex:indexPath.section];
+        SearchLocationTableViewCell *cell = (SearchLocationTableViewCell*) [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        
+        if (cell == nil){
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"SearchLocationTableViewCell" owner:nil options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+        }
+        //NSDictionary* searchDic = [_searchList objectAtIndex:indexPath.row];
+        cell.locationNameLabel.textColor = [UIColor whiteColor];
+        cell.locationNameLabel.text = locationName;
+        return cell;
+    }else{
+        NSString* locationName = [_locationArray objectAtIndex:indexPath.section];
+        SearchTableViewCell *cell = (SearchTableViewCell*) [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        
+        if (cell == nil){
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"SearchTableViewCell" owner:nil options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+        }
+        //NSDictionary* searchDic = [_searchList objectAtIndex:indexPath.row];
+        cell.innNameLabel.textColor = [UIColor whiteColor];
+        cell.innNameLabel.text = locationName;
+        return cell;
     }
-    cell.backgroundColor = [UIColor blackColor];
-    cell.backgroundView.alpha = 0.7f;
-    cell.textLabel.textColor = [UIColor whiteColor];
-    cell.textLabel.text = @"지역지역";
-    return cell;
+    return NULL;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    
+    JY_LOG(@"didSelectRowAtIndexPath");
 }
 
 // Only override drawRect: if you perform custom drawing.

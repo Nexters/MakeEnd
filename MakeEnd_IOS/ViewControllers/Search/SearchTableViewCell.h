@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface SearchTableViewCell : UITableViewCell
-
+@property (nonatomic, weak) IBOutlet UILabel* innNameLabel;
 @end

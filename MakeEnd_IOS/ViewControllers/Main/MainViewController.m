@@ -13,12 +13,18 @@
 #import <NSString+CJStringValidator.h>
 @interface MainViewController ()
 @property (nonatomic, weak) IBOutlet MKMapView* mapView;
-@property (nonatomic, strong) IBOutlet UILabel* addressLabel;
+@property (nonatomic, weak) IBOutlet UILabel* addressLabel;
+@property (nonatomic, weak) IBOutlet UIView* localtionDetailView;
+@property (nonatomic, weak) IBOutlet UILabel* locationNameLabel;
+@property (nonatomic, weak) IBOutlet UIView* bannerView;
+@property (nonatomic, strong) IBOutletCollection(UIButton) NSArray *bannerBtnArray;
 
+@property (nonatomic, strong) Pin* pin;
 @property (nonatomic, strong) CLLocation* location;
 @property (nonatomic, strong) CLGeocoder *geocoder;
 @property (nonatomic, strong) CLLocationManager *locationManager;
 @property (nonatomic, strong) NSMutableSet* localSet;
+@property (nonatomic, strong) NSMutableArray* bannerArray;
 @end
 
 
@@ -61,6 +67,7 @@ static int kLoadDistanceDelta = 2.0f; // 얼마나 스케일이 축소되야 정
 
 - (IBAction)searchClick:(id)sender{
     SearchView* searchView =  [[[NSBundle mainBundle] loadNibNamed:@"SearchView" owner:nil options:nil] objectAtIndex:0];
+    //searchView.backgroundColorView.backgroundColor = [UIColor clearColor];
     searchView.mainViewCont = self;
     [searchView initView];
     [self.view addSubview:searchView];
@@ -70,7 +77,28 @@ static int kLoadDistanceDelta = 2.0f; // 얼마나 스케일이 축소되야 정
         searchView.transform = CGAffineTransformIdentity;
     } completion:^(BOOL finished){
         // if you want to do something once the animation finishes, put it here
+        //searchView.backgroundColorView.backgroundColor = [UIColor blackColor];
     }];
+}
+
+- (IBAction)detailClick:(id)sender
+{
+    
+}
+
+- (IBAction)phoneClick:(id)sender
+{
+    if (_pin) {
+        if ([_pin.phoneNumber isPhoneNumber]) {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"tel:%@",_pin.phoneNumber]]];
+        }
+    }
+}
+
+- (IBAction)bannerClick:(id)sender
+{
+    NSInteger tag = ((UIButton *)sender).tag;
+    JY_LOG(@"BNNER CLICK :%d",tag);
 }
 
 - (void)reloadMap{
@@ -180,6 +208,39 @@ static int kLoadDistanceDelta = 2.0f; // 얼마나 스케일이 축소되야 정
     }];
 }
 
+- (void)setBannerView{
+    NSMutableDictionary* parameters = [[NSMutableDictionary alloc] init];
+    [parameters setObject:_localCode forKey:@"locCode"];
+    [[AFAppDotNetAPIClient sharedClient] postPath:@"MakeEndBannerList.asp" parameters:parameters success:^(AFHTTPRequestOperation *response, id responseObject) {
+        NSDictionary* dic = [NSDictionary dictionaryWithXMLData:responseObject];
+#ifdef __DEBUG_LOG__
+        JY_LOG(@"MakeEndBannerList.asp: %@",[dic objectForKey:@"bannerlist"]);
+#endif
+        _bannerArray = [dic objectForKey:@"bannerlist"];
+        int idx = 0;
+        for (UIButton* btn in _bannerBtnArray) {
+            if (idx < [_bannerArray count]) {
+                [btn setTag:idx];
+                [btn setTitle:[[_bannerArray objectAtIndex:idx] objectForKey:@"bannertitle"] forState:UIControlStateNormal];
+            }
+            idx++;
+        }
+        
+        _bannerView.hidden = FALSE;
+        _bannerView.transform = CGAffineTransformMakeScale(0.01, 0.01);
+        [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+            // animate it to the identity transform (100% scale)
+            _bannerView.transform = CGAffineTransformIdentity;
+        } completion:^(BOOL finished){
+            // if you want to do something once the animation finishes, put it here
+            //searchView.backgroundColorView.backgroundColor = [UIColor blackColor];
+        }];
+    } failure:^(AFHTTPRequestOperation *operation,NSError *error) {
+#ifdef __DEBUG_LOG__
+        JY_LOG(@"MakeEndQuickList.asp [HTTPClient Error]: %@", error.localizedDescription);
+#endif
+    }];
+}
 
 #pragma mark - CLLocationManagerDelegate
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
@@ -194,14 +255,13 @@ static int kLoadDistanceDelta = 2.0f; // 얼마나 스케일이 축소되야 정
     CLLocation* location = [locations lastObject];
     
     if (location != NULL) {
-        JY_LOG(@"CLLocationDistance : %lf",[location distanceFromLocation:_location]);
-        
         if (_location == NULL || [location distanceFromLocation:_location] > kRefreshDistance) {
             _location = location;
             JY_LOG(@"locationManager : %lf , %lf",_location.coordinate.latitude,_location.coordinate.longitude);
             [self reloadMap];
             [self reverseGeocoder:_location];
             [self postMyLocation];
+            [self setBannerView];
         }
     }
 }
@@ -238,6 +298,7 @@ static int kLoadDistanceDelta = 2.0f; // 얼마나 스케일이 축소되야 정
             annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:identifier];
             annotationView.enabled = YES;
             annotationView.canShowCallout = YES;
+            /*
             UIButton *rightButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
             if ([pin.phoneNumber isPhoneNumber]) {
                 //annotationView.rightCalloutAccessoryView =  [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ballon_call.png"]];
@@ -248,6 +309,7 @@ static int kLoadDistanceDelta = 2.0f; // 얼마나 스케일이 축소되야 정
             }
             [rightButton setTitle:@"" forState:UIControlStateNormal];
             [annotationView setRightCalloutAccessoryView:rightButton];
+             */
             annotationView.image = [UIImage imageNamed:@"empty_room_marker_on.png"];
         }
         annotationView.annotation = annotation;
@@ -258,20 +320,41 @@ static int kLoadDistanceDelta = 2.0f; // 얼마나 스케일이 축소되야 정
 
 - (void)annotationClick:(UITapGestureRecognizer *)gestureRecognizer
 {
-    UIButton *btn = (UIButton *) gestureRecognizer.view;
-    MKAnnotationView *view = (MKAnnotationView *)[btn superview];
-}
+   }
 
 - (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control{
-    NSLog(@"calloutAccessoryControlTapped");
+    /*
     Pin* pin = view.annotation;
     if ([pin.phoneNumber isPhoneNumber]) {
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"tel:%@",pin.phoneNumber]]];
     }
+     */
 }
 - (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view
 {
-    
+    JY_LOG(@"didSelectAnnotationView");
+    _pin = view.annotation;
+    _locationNameLabel.text = _pin.title;
+    _localtionDetailView.hidden = FALSE;
+    _localtionDetailView.transform = CGAffineTransformMakeScale(0.01, 0.01);
+    [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+        // animate it to the identity transform (100% scale)
+        _localtionDetailView.transform = CGAffineTransformIdentity;
+    } completion:^(BOOL finished){
+        // if you want to do something once the animation finishes, put it here
+    }];
+}
+- (void)mapView:(MKMapView *)mapView didDeselectAnnotationView:(MKAnnotationView *)view
+{
+    JY_LOG(@"didDeselectAnnotationView");
+    _pin = NULL;
+    _locationNameLabel.text = @"";
+    [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+        // animate it to the identity transform (100% scale)
+        _localtionDetailView.transform = CGAffineTransformMakeScale(0.01, 0.01);
+    } completion:^(BOOL finished){
+        // if you want to do something once the animation finishes, put it here
+    }];
 }
 - (void)didReceiveMemoryWarning
 {

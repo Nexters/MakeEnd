@@ -14,6 +14,9 @@
 		CD1542C31934EFE7007AF35A /* SearchTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD1542C21934EFE7007AF35A /* SearchTableViewCell.xib */; };
 		CD1C27CD1929BDB4009CF1B0 /* AFAppDotNetAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1C27CC1929BDB4009CF1B0 /* AFAppDotNetAPIClient.m */; };
 		CD37DC8C192DF36D002394A2 /* BusinessUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = CD37DC8B192DF36D002394A2 /* BusinessUtil.m */; };
+		CD7EB5FC1945F57400839FD4 /* Manager.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7EB5FB1945F57400839FD4 /* Manager.m */; };
+		CD7EB5FF1945FB4A00839FD4 /* SearchLocationTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CD7EB5FE1945FB4A00839FD4 /* SearchLocationTableViewCell.m */; };
+		CD7EB6011945FB5E00839FD4 /* SearchLocationTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD7EB6001945FB5E00839FD4 /* SearchLocationTableViewCell.xib */; };
 		CD9673121921FD4000D74E2A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD9673111921FD4000D74E2A /* Foundation.framework */; };
 		CD9673141921FD4000D74E2A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD9673131921FD4000D74E2A /* CoreGraphics.framework */; };
 		CD9673161921FD4000D74E2A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD9673151921FD4000D74E2A /* UIKit.framework */; };
@@ -108,6 +111,11 @@
 		CD1C27CC1929BDB4009CF1B0 /* AFAppDotNetAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFAppDotNetAPIClient.m; sourceTree = "<group>"; };
 		CD37DC8A192DF36D002394A2 /* BusinessUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BusinessUtil.h; sourceTree = "<group>"; };
 		CD37DC8B192DF36D002394A2 /* BusinessUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BusinessUtil.m; sourceTree = "<group>"; };
+		CD7EB5FA1945F57400839FD4 /* Manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Manager.h; sourceTree = "<group>"; };
+		CD7EB5FB1945F57400839FD4 /* Manager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Manager.m; sourceTree = "<group>"; };
+		CD7EB5FD1945FB4A00839FD4 /* SearchLocationTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchLocationTableViewCell.h; sourceTree = "<group>"; };
+		CD7EB5FE1945FB4A00839FD4 /* SearchLocationTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchLocationTableViewCell.m; sourceTree = "<group>"; };
+		CD7EB6001945FB5E00839FD4 /* SearchLocationTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SearchLocationTableViewCell.xib; sourceTree = "<group>"; };
 		CD96730E1921FD4000D74E2A /* MakeEnd_IOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MakeEnd_IOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD9673111921FD4000D74E2A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CD9673131921FD4000D74E2A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -225,6 +233,9 @@
 				CD1542BF1934EFD9007AF35A /* SearchTableViewCell.h */,
 				CD1542C01934EFD9007AF35A /* SearchTableViewCell.m */,
 				CD1542C21934EFE7007AF35A /* SearchTableViewCell.xib */,
+				CD7EB5FD1945FB4A00839FD4 /* SearchLocationTableViewCell.h */,
+				CD7EB5FE1945FB4A00839FD4 /* SearchLocationTableViewCell.m */,
+				CD7EB6001945FB5E00839FD4 /* SearchLocationTableViewCell.xib */,
 			);
 			path = Search;
 			sourceTree = "<group>";
@@ -452,6 +463,8 @@
 				CD9673C319221FB300D74E2A /* Pin.m */,
 				CD37DC8A192DF36D002394A2 /* BusinessUtil.h */,
 				CD37DC8B192DF36D002394A2 /* BusinessUtil.m */,
+				CD7EB5FA1945F57400839FD4 /* Manager.h */,
+				CD7EB5FB1945F57400839FD4 /* Manager.m */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -575,6 +588,7 @@
 				CD96739B1921FD9400D74E2A /* ploading0012.png in Resources */,
 				CD9673841921FD9400D74E2A /* full_room_marker_off.png in Resources */,
 				CD9673A51921FD9400D74E2A /* ploading0022.png in Resources */,
+				CD7EB6011945FB5E00839FD4 /* SearchLocationTableViewCell.xib in Resources */,
 				CD96732D1921FD4300D74E2A /* Images.xcassets in Resources */,
 				CD9673251921FD4200D74E2A /* Main_iPhone.storyboard in Resources */,
 				CD9673861921FD9400D74E2A /* ic_angle.png in Resources */,
@@ -647,9 +661,11 @@
 				CD96731E1921FD4100D74E2A /* main.m in Sources */,
 				CD37DC8C192DF36D002394A2 /* BusinessUtil.m in Sources */,
 				CD9673C419221FB300D74E2A /* Pin.m in Sources */,
+				CD7EB5FF1945FB4A00839FD4 /* SearchLocationTableViewCell.m in Sources */,
 				CD9673BC192213D500D74E2A /* MainViewController.m in Sources */,
 				CD9673B719220F8C00D74E2A /* UIImageView+AnimationCompletion.m in Sources */,
 				CD1C27CD1929BDB4009CF1B0 /* AFAppDotNetAPIClient.m in Sources */,
+				CD7EB5FC1945F57400839FD4 /* Manager.m in Sources */,
 				CD1542C11934EFD9007AF35A /* SearchTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
